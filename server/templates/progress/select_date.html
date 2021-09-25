@@ -1,0 +1,39 @@
+{% extends "share/base.html" %}
+
+{% block content %} 
+<div id="dates" class="hidden">{{ datesList }}</div>
+<section><h1>盤點進度追蹤</h1></section>
+<section>
+  <form name="selectDateForm" action="/progress" method="POST">
+    <section>
+      <label for="select1">選擇盤點日期:</label>
+    </section>
+    <section>
+      <select id="select1" name="date">
+        <!-- <option value="1100819">1100819</option> -->
+      </select>
+    </section>
+    <section>
+      <button id="query_bt" type="submit">查詢</button>
+    </section>
+  </form>
+</section>
+    
+<script>
+  function generateDateToSelect(datesArray){
+    var select = document.getElementById("select1");
+    // console.log(datesArray.length);
+    datesArray.forEach(element => {
+      let option = document.createElement('option');
+      option.setAttribute("value", element);
+      option.textContent = element;
+      select.appendChild(option)
+    });
+  }
+  var datesArray = document.getElementById("dates").textContent;
+  // console.log(datesArray);
+  datesArray = JSON.parse(datesArray);
+  datesArray = datesArray.sort(function(a,b){return b-a});
+  generateDateToSelect(datesArray);
+</script>
+{% endblock %} 

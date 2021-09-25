@@ -1,0 +1,42 @@
+{% extends "share/base.html" %}
+
+{% block content %} 
+    <section>
+        <form name="newUserForm" action="/create_user" method="POST">
+            <!-- <header>
+                <h2>新增使用者</h2>
+            </header> -->
+            <section>
+                <h1>新增使用者</h1>
+            </section>
+            <label for="input1">帳號:</label>
+            <section>
+                <input type="text" id="newUsername" name="newUsername" size="" placeholder="" required>
+            </section>
+            <label for="input2">密碼:</label>
+            <section>
+                <input type="password" id="newPassword" name="newPassword" size="" placeholder="" required>
+            </section>
+            <section>
+                <p id="check_result">{{ result }}</p>
+            </section>
+            <section>
+                <button id="create_bt" type="submit">新增</button>
+            </section>
+        </form>
+    </section>
+    <!-- <section>
+        <p id="check_result">{{ result }}</p>
+    </section> -->
+
+    <script>
+        var test = document.getElementById("check_result");
+        if (test.textContent == "使用者新增成功!") {
+            test.style.color = "#118bee";
+            test.style.fontWeight = "bold";
+        } else if (test.textContent == "新增失敗，帳號已被使用!") {
+            test.style.color = "#fc0303";
+            test.style.fontWeight = "bold";
+        }
+    </script>
+{% endblock %} 

@@ -1,0 +1,42 @@
+{% extends "share/base.html" %}
+
+{% block content %} 
+<div id="inventoryData" class="hidden">{{ inventoryData }}</div>
+<section><h1>開啟{{ date }}盤點畫面</h1></section>
+<section>
+    <table id="table">
+        <thead>
+            <tr>
+                <th>盤點日期</th>
+                <th>單位</th>
+                <th>組別</th>
+                <th>代碼</th>
+                <th>藥名</th>
+                <th>App盤點總數量</th>
+            </tr>
+        </thead>
+    </table>
+</section>
+<br><br>
+
+<script>
+    var inventoryData = document.getElementById("inventoryData").textContent;
+    var test = document.getElementById("inventoryData");
+    test.textContent = "";
+    inventoryData = JSON.parse(inventoryData);
+    generateTable(inventoryData);
+
+    function generateTable(inventoryData) {
+        var table = document.getElementById("table");
+        inventoryData.forEach(element => {
+            let tr = document.createElement('tr');
+            element.forEach(data => {
+                let td = document.createElement('td');
+                td.textContent = data;
+                tr.appendChild(td)
+            });
+            table.appendChild(tr)
+        });
+    }
+</script>
+{% endblock %} 

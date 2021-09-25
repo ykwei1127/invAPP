@@ -1,0 +1,68 @@
+{% extends "share/base.html" %}
+
+{% block content %} 
+<div id="progressData" class="hidden">{{ progressData }}</div>
+<header>
+    <h1>盤點日期: {{date}}</h1>
+</header>
+<section>
+    <table id="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>盤點日期</th>
+                <th>單位</th>
+                <th>組別</th>
+                <th>藥品總數</th>
+                <th>已盤點數</th>
+                <th>完成百分比</th>
+            </tr>
+        </thead>
+        <tbody id="tbody">
+        </tbody>
+    </table>
+</section>
+<br><br>
+
+<script>
+    var progressData = document.getElementById("progressData").textContent;
+    progressData = JSON.parse(progressData);
+    // console.log(progressData);
+    generateTable(progressData);
+
+    function generateTable(progressData) {
+        var tbody = document.getElementById("tbody");
+        // var table = document.getElementById("table");
+        progressData.forEach(element => {
+            let tr = document.createElement('tr');
+            tr.setAttribute('class', 'tableRowHover');
+            tr.setAttribute('onclick', 'clickRow(this)');
+            // element.forEach(data => {
+            element.forEach(function(data, index, array) {
+                let td = document.createElement('td');
+                td.textContent = data;
+                if (index === array.length - 1) {
+                    td.textContent = data + " %";
+                }
+                tr.appendChild(td)
+            });
+            tbody.appendChild(tr)
+        });
+    }
+
+    function clickRow(obj) {
+        var clickedID = obj.getElementsByTagName('td')[0].textContent;
+        var clickedDate = obj.getElementsByTagName('td')[1].textContent;
+        // console.log(clickedID);
+        url = '/progress/'+clickedDate+'/'+clickedID;
+        window.location = url;
+        // var request = new XMLHttpRequest();
+        // url = '/progress/'+clickedDate+'/'+clickedID;
+        // request.open('GET',url, true);
+        // request.onload = function () {
+        //     window.location = url;
+        // }
+        // request.send(null);
+    }
+</script>
+{% endblock %} 

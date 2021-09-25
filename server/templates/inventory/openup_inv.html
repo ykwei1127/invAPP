@@ -1,0 +1,69 @@
+{% extends "share/base.html" %}
+
+{% block content %}
+<div id="dates" class="hidden">{{ datesList }}</div>
+<section>
+  <h1>展開新盤點</h1>
+</section>
+<section>
+  <form name="openupNewInvForm" action="/new_inv" method="POST" enctype="multipart/form-data">
+    <section>
+      <label for="myfile">匯入盤點資料:</label>
+    </section>
+    <section>
+      <input type="file" id="myfile" name="myfile" required>
+    </section>
+    <br>
+    <section>
+      <label for="invDate">輸入盤點日期:</label>
+    </section>
+    <section>
+      <input type="text" id="invDate" name="invDate" placeholder="範例: 1100810" required>
+    </section>
+    <br>
+    <section>
+      <button id="start_bt1" type="submit">展開盤點</button>
+    </section>
+  </form>
+</section>
+<br>
+
+<section>
+  <h1>展開舊盤點</h1>
+</section>
+<section>
+  <form name="continueInvForm" action="/continue_inv" method="POST">
+    <section>
+      <label for="selectDate">選擇盤點日期:</label>
+    </section>
+    <section>
+      <select id="select" name="selectDate">
+        <!-- <option value="1100819">1100819</option> -->
+        <!-- <option value="1100820">1100820</option> -->
+      </select>
+    </section>
+    <br>
+    <section>
+      <button id="start_bt2" type="submit">展開盤點</button>
+    </section>
+  </form>
+</section>
+<br> <br>
+
+<script>
+  function generateDateToSelect(datesArray) {
+    var select = document.getElementById("select");
+    console.log(datesArray.length);
+    datesArray.forEach(element => {
+      let option = document.createElement('option');
+      option.setAttribute("value", element);
+      option.textContent = element;
+      select.appendChild(option)
+    });
+  }
+  var datesArray = document.getElementById("dates").textContent;
+  datesArray = JSON.parse(datesArray);
+  datesArray = datesArray.sort(function (a, b) { return b - a });
+  generateDateToSelect(datesArray);
+</script>
+{% endblock %}

@@ -1,0 +1,42 @@
+{% extends "share/base.html" %}
+
+{% block content %} 
+<div id="date" class="hidden">{{ data }}</div>
+<header>
+    <h1>盤點日期: {{date}}</h1>
+</header>
+<section>
+    <table id="table">
+        <thead>
+            <tr>
+                <th>盤點日期</th>
+                <th>小庫別</th>
+                <th>組別</th>
+                <th>完成百分比</th>
+            </tr>
+        </thead>
+        <tr>
+            <td>1100819</td>
+            <td>中心藥局1櫃(PA)</td>
+            <td>A*1</td>
+            <td>30%</td>
+        </tr>
+        <tr>
+            <td>1100819</td>
+            <td>中心藥局</td>
+            <td>A*1</td>
+            <td>30%</td>
+        </tr>
+        <tr>
+            <td>1100819</td>
+            <td>中心藥局1櫃123地區(PA)</td>
+            <td>A*1</td>
+            <td>30%</td>
+        </tr>
+    </table>
+</section>
+
+<script>
+    
+</script>
+{% endblock %} 

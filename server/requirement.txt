@@ -1,0 +1,9 @@
+pip install fastapi
+pip install uvicorn[standard]
+pip install jinja2
+pip install aiofiles
+pip install python-multipart
+pip install fastapi-login==1.6.3
+
+conda install pandas
+conda install openpyxl

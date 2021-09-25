@@ -1,0 +1,50 @@
+{% extends "share/base.html" %}
+
+{% block content %} 
+<div id="progressDetailData" class="hidden">{{ progressDetailData }}</div>
+<section>
+    <table id="table">
+        <thead>
+            <tr>
+                <th>盤點日期</th>
+                <th>單位</th>
+                <th>組別</th>
+                <th>代碼</th>
+                <th>藥名</th>
+                <th>App盤點總數量</th>
+                <th>是否盤點</th>
+            </tr>
+        </thead>
+        <tbody id="tbody">
+        </tbody>
+    </table>
+</section>
+
+<script>
+    var progressDetailData = document.getElementById("progressDetailData").textContent;
+    progressDetailData = JSON.parse(progressDetailData);
+    console.log(progressDetailData);
+    generateTable(progressDetailData);
+
+    function generateTable(progressDetailData) {
+        var tbody = document.getElementById("tbody");
+        // var table = document.getElementById("table");
+        progressDetailData.forEach(element => {
+            let tr = document.createElement('tr');
+            element.forEach(function(data, index, array) {
+                let td = document.createElement('td');
+                td.textContent = data;
+                tr.appendChild(td);
+                if (index === array.length - 1) {
+                    if (data == 1) {
+                        tr.setAttribute("class","finish");
+                    } else {
+                        tr.setAttribute("class","notFinish");
+                    }
+                }
+            });
+            tbody.appendChild(tr)
+        });
+    }
+</script>
+{% endblock %} 

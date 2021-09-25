@@ -1,0 +1,79 @@
+{% extends "share/base.html" %}
+
+{% block content %} 
+<div id="users" class="hidden">{{ data }}</div>
+<section>
+    <form name="deleteUserForm" action="/modify_user" method="POST">
+        <section>
+            <h1>編輯使用者</h1>
+        </section>
+        <section>
+            <table id="table">
+                <thead>
+                    <tr>
+                        <th>勾選刪除</th>
+                        <th>使用者</th>
+                    </tr>
+                </thead>
+                <!-- <tr>
+                    <td><input type="checkbox" id="vehicle1" name="vehicle1" value="Bike"></td>
+                    <td><label for="vehicle1"> I have a bike</label></td>
+                </tr>
+                <tr>
+                    <td><input type="checkbox" id="vehicle2" name="vehicle2" value="Car"></td>
+                    <td><label for="vehicle1"> I have a bike</label></td>
+                </tr>
+                <tr>
+                    <td><input type="checkbox" id="vehicle3" name="vehicle3" value="Boat"></td>
+                    <td><label for="vehicle3"> I have a boat</label></td>
+                </tr> -->
+            </table>
+        </section>
+        <section>
+            <p class="check_result">{{ result }}</p>
+        </section>
+        <section>
+            <button id="modify_bt" type="submit">刪除</button>
+        </section>
+      </form>
+</section>
+
+<script>    
+    function generateTable(users) {
+        // console.log(user.length);
+        var table = document.getElementById("table");
+        var count = 1;
+        users.forEach(it => {
+            // console.log(it);
+            let tr = document.createElement('tr');
+            let td_input = document.createElement('td');
+            let td_label = document.createElement('td');
+            // 設定chackbox
+            let input = document.createElement('input');
+            input.setAttribute('type', 'checkbox');
+            input.setAttribute('name', 'user'.concat(count.toString()));
+            // input.setAttribute('name', it);
+            input.setAttribute('value', it);
+            input.setAttribute('placeholder', 'checkbox');
+            td_input.appendChild(input);
+            tr.appendChild(td_input);
+            // 設定顯示使用者
+            let label = document.createElement('label');
+            label.textContent = it;
+            td_label.appendChild(label);
+            tr.appendChild(td_label);
+            // 每個使用者為一列，放進table中
+            table.appendChild(tr);
+            count++;
+        });
+        return table;
+    }
+ 
+    var users = document.getElementById("users").textContent;
+    users = JSON.parse(users);
+    users = users.sort();
+    // console.log(user);
+    generateTable(users);
+</script>
+
+{% endblock %} 
