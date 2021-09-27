@@ -182,4 +182,18 @@ def app_qrcode_get_med_code_name_flag(request: Request, qrcode: str):
     headers = {"Charset":"utf-8"}
     return Response(content=data, headers=headers)
 
+@app.get("/appGetData/{unit}/{group}/{code}")
+def app_get_data(request: Request, unit: str, group: str, code: str):
+    data = dbUtils.db_app_qrcode_unit_info(unit, group, code)
+    headers = {"Charset":"utf-8"}
+    return Response(content=data, headers=headers)
+
+@app.post("/appInventory")
+async def app_post_data(request: Request):
+    dict = await request.json()
+    dbUtils.db_app_invent(dict)
+    content = {"status": "success"}
+    content = json.dumps(content)
+    return Response(content=content)
+
 ### APP ###

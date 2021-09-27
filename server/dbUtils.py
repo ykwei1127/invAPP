@@ -89,7 +89,7 @@ def db_get_all_data_list():
     # 連資料庫
     conn = sqlite3.connect(dataDB)
     cursor = conn.cursor()
-    cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE '%-%' AND name NOT LIKE 'sqlite_sequence'")
+    cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE '%-%' AND name NOT LIKE 'sqlite_sequence'AND name NOT LIKE 'salesUnit'")
     data = cursor.fetchall()
     data = json.dumps([d[0] for d in data], indent=4)
     conn.close()
@@ -111,6 +111,7 @@ def db_create_data_table(date, rawDataFrame):
     rawDataFrame['藥名'] = rawDataFrame['藥名'].str.strip()
     rawDataFrame['計價單位'] = rawDataFrame['計價單位'].str.strip()
     rawDataFrame['預包數量'] = rawDataFrame['預包數量'].fillna(0)
+    rawDataFrame['預包單位'] = rawDataFrame['預包單位'].fillna("無")
     rawDataFrame.to_sql("temp", conn, if_exists='append', index=False)
     # 從 temp table取出數量建成盤點進度的table
     query = "SELECT 盤點日,單位,組別,COUNT(*) AS 藥品總數 FROM temp GROUP BY 盤點日,單位,組別"
@@ -203,6 +204,10 @@ def db_set_default_user(username, password):
     conn.close()
     return
 
+# 設定中英文計價單位對照表
+def db_set_salesUnit(df):
+    conn = sqlite3.connect(dataDB)
+    df.to_sql('salesUnit', conn, if_exists = 'replace', index=False)
 #----- DEFAULT for Initiation -----#
 
 # SELECT *, COUNT(*) FROM '1100814' GROUP BY 盤點日,單位,組別
@@ -231,12 +236,9 @@ def db_app_qrcode_result(qrcode):
     position = qrcode.split()
     unit = position[0]
     group = position[1]
-    print(unit)
-    print(group)
     date = db_get_all_data_list()
     date = json.loads(date)
     date = max(date)
-    print(date)
 
     conn = sqlite3.connect(dataDB)
     cursor = conn.cursor()
@@ -244,5 +246,38 @@ def db_app_qrcode_result(qrcode):
     data = pd.read_sql(sql, conn)
     data = data.to_json(orient='records')
     return data
+
+# 利用藥品位置及藥碼取得預包的單位
+def db_app_qrcode_unit_info(unit, group, code):
+    date = db_get_all_data_list()
+    date = json.loads(date)
+    date = max(date)
+    conn = sqlite3.connect(dataDB)
+    sql = "SELECT * From salesUnit"
+    unitComparisonTable = pd.read_sql(sql, conn).set_index("計價單位").T.to_dict("list")
+    sql = "SELECT 計價單位, 預包數量, 預包單位 FROM {0} WHERE 單位={1} AND 組別={2} AND 代碼={3}".format(f"'{date}'", f"'{unit}'", f"'{group}'", f"'{code}'")
+    df = pd.read_sql(sql, conn)
+    df["計價單位"] = unitComparisonTable[df["計價單位"].values[0]][0]
+    data = df.to_json(orient='records')
+    return data
+
+# 將App位置藥碼的盤點預包數量及盤點數量更新至database
+def db_app_invent(dict):
+    date = db_get_all_data_list()
+    date = json.loads(date)
+    date = max(date)
+    unit = dict["單位"]
+    group = dict["組別"]
+    code = dict["代碼"]
+    prePackedNum = dict["App盤點預包數量"]
+    num = dict["App盤點數量"]
+
+    conn = sqlite3.connect(dataDB)
+    cursor = conn.cursor()
+    sql = "UPDATE {0} SET App盤點預包數量={1}, App盤點數量={2} WHERE 單位={3} AND 組別={4} AND 代碼={5}".format(f"'{date}'", f"'{prePackedNum}'", f"'{num}'", f"'{unit}'", f"'{group}'", f"'{code}'")
+    cursor.execute(sql)
+    conn.commit()
+    conn.close()
+    return
 
 #---------------APP---------------#
