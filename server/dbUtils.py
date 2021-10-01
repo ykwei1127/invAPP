@@ -280,4 +280,30 @@ def db_app_invent(dict):
     conn.close()
     return
 
+# 加減單一藥品數量，查詢關鍵字，將符合關鍵字藥品的藥碼及藥名回傳
+def db_app_search_result(query):
+    date = db_get_all_data_list()
+    date = json.loads(date)
+    date = max(date)
+
+    conn = sqlite3.connect(dataDB)
+    cursor = conn.cursor()
+    sql = "SELECT 代碼, 藥名 FROM {0} WHERE 藥名 LIKE {1} GROUP BY 藥名".format(f"'{date}'", f"'%{query}%'")
+    data = pd.read_sql(sql, conn)
+    data = data.to_json(orient='records')
+    return data
+
+# 加減單一藥品數量，回傳選取藥品所在的所有位置及盤點量是否盤點
+def db_app_select_result(code):
+    date = db_get_all_data_list()
+    date = json.loads(date)
+    date = max(date)
+
+    conn = sqlite3.connect(dataDB)
+    cursor = conn.cursor()
+    sql = "SELECT 單位, 組別, App盤點總數量, 是否盤點 FROM {0} WHERE 代碼={1}".format(f"'{date}'", f"'{code}'")
+    data = pd.read_sql(sql, conn)
+    data = data.to_json(orient='records')
+    return data
+
 #---------------APP---------------#

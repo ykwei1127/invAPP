@@ -1,6 +1,6 @@
 {% extends "share/base.html" %}
 
-{% block content %} 
+{% block content %}
 <div id="progressDetailData" class="hidden">{{ progressDetailData }}</div>
 <section>
     <table id="table">
@@ -12,13 +12,13 @@
                 <th>代碼</th>
                 <th>藥名</th>
                 <th>App盤點總數量</th>
-                <th>是否盤點</th>
             </tr>
         </thead>
         <tbody id="tbody">
         </tbody>
     </table>
 </section>
+<br><br>
 
 <script>
     var progressDetailData = document.getElementById("progressDetailData").textContent;
@@ -31,20 +31,21 @@
         // var table = document.getElementById("table");
         progressDetailData.forEach(element => {
             let tr = document.createElement('tr');
-            element.forEach(function(data, index, array) {
-                let td = document.createElement('td');
-                td.textContent = data;
-                tr.appendChild(td);
+            element.forEach(function (data, index, array) {
                 if (index === array.length - 1) {
                     if (data == 1) {
-                        tr.setAttribute("class","finish");
+                        tr.setAttribute("class", "finish");
                     } else {
-                        tr.setAttribute("class","notFinish");
+                        tr.setAttribute("class", "notFinish");
                     }
+                } else {
+                    let td = document.createElement('td');
+                    td.textContent = data;
+                    tr.appendChild(td);
                 }
             });
             tbody.appendChild(tr)
         });
     }
 </script>
-{% endblock %} 
+{% endblock %}

@@ -196,4 +196,16 @@ async def app_post_data(request: Request):
     content = json.dumps(content)
     return Response(content=content)
 
+@app.get("/appGetSearchResult/{query}")
+def app_get_search_result(request: Request, query: str):
+    data = dbUtils.db_app_search_result(query)
+    headers = {"Charset":"utf-8"}
+    return Response(content=data, headers=headers)
+
+@app.get("/appGetSelectResult/{code}")
+def app_get_select_med_unit_group_amount_flag(request: Request, code: str):
+    data = dbUtils.db_app_select_result(code)
+    headers = {"Charset":"utf-8"}
+    return Response(content=data, headers=headers)
+
 ### APP ###

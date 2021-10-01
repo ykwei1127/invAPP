@@ -1,10 +1,10 @@
 {% extends "share/base.html" %}
 
-{% block content %} 
+{% block content %}
 <div id="progressData" class="hidden">{{ progressData }}</div>
-<header>
+<section>
     <h1>盤點日期: {{date}}</h1>
-</header>
+</section>
 <section>
     <table id="table">
         <thead>
@@ -38,7 +38,7 @@
             tr.setAttribute('class', 'tableRowHover');
             tr.setAttribute('onclick', 'clickRow(this)');
             // element.forEach(data => {
-            element.forEach(function(data, index, array) {
+            element.forEach(function (data, index, array) {
                 let td = document.createElement('td');
                 td.textContent = data;
                 if (index === array.length - 1) {
@@ -54,7 +54,7 @@
         var clickedID = obj.getElementsByTagName('td')[0].textContent;
         var clickedDate = obj.getElementsByTagName('td')[1].textContent;
         // console.log(clickedID);
-        url = '/progress/'+clickedDate+'/'+clickedID;
+        url = '/progress/' + clickedDate + '/' + clickedID;
         window.location = url;
         // var request = new XMLHttpRequest();
         // url = '/progress/'+clickedDate+'/'+clickedID;
@@ -65,4 +65,4 @@
         // request.send(null);
     }
 </script>
-{% endblock %} 
+{% endblock %}
