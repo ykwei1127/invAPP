@@ -208,4 +208,18 @@ def app_get_select_med_unit_group_amount_flag(request: Request, code: str):
     headers = {"Charset":"utf-8"}
     return Response(content=data, headers=headers)
 
+@app.get("/appGetSingleInventoryUnit/{unit}/{group}/{code}")
+def app_get_single_inventory_unit_info(request: Request, unit: str, group: str, code: str):
+    data = dbUtils.db_app_single_unit_info(unit, group, code)
+    headers = {"Charset":"utf-8"}
+    return Response(content=data, headers=headers)
+
+@app.post("/appSingleInventory")
+async def app_post_single_amount(request: Request):
+    dict = await request.json()
+    dbUtils.db_app_update_single_amount(dict)
+    content = {"status": "success"}
+    content = json.dumps(content)
+    return Response(content=content)
+
 ### APP ###

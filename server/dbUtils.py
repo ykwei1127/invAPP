@@ -236,9 +236,7 @@ def db_app_qrcode_result(qrcode):
     position = qrcode.split()
     unit = position[0]
     group = position[1]
-    date = db_get_all_data_list()
-    date = json.loads(date)
-    date = max(date)
+    date = get_latest_inventory_date()
 
     conn = sqlite3.connect(dataDB)
     cursor = conn.cursor()
@@ -249,9 +247,7 @@ def db_app_qrcode_result(qrcode):
 
 # 利用藥品位置及藥碼取得預包的單位
 def db_app_qrcode_unit_info(unit, group, code):
-    date = db_get_all_data_list()
-    date = json.loads(date)
-    date = max(date)
+    date = get_latest_inventory_date()
     conn = sqlite3.connect(dataDB)
     sql = "SELECT * From salesUnit"
     unitComparisonTable = pd.read_sql(sql, conn).set_index("計價單位").T.to_dict("list")
@@ -263,9 +259,7 @@ def db_app_qrcode_unit_info(unit, group, code):
 
 # 將App位置藥碼的盤點預包數量及盤點數量更新至database
 def db_app_invent(dict):
-    date = db_get_all_data_list()
-    date = json.loads(date)
-    date = max(date)
+    date = get_latest_inventory_date()
     unit = dict["單位"]
     group = dict["組別"]
     code = dict["代碼"]
@@ -282,10 +276,7 @@ def db_app_invent(dict):
 
 # 加減單一藥品數量，查詢關鍵字，將符合關鍵字藥品的藥碼及藥名回傳
 def db_app_search_result(query):
-    date = db_get_all_data_list()
-    date = json.loads(date)
-    date = max(date)
-
+    date = get_latest_inventory_date()
     conn = sqlite3.connect(dataDB)
     cursor = conn.cursor()
     sql = "SELECT 代碼, 藥名 FROM {0} WHERE 藥名 LIKE {1} GROUP BY 藥名".format(f"'{date}'", f"'%{query}%'")
@@ -295,10 +286,7 @@ def db_app_search_result(query):
 
 # 加減單一藥品數量，回傳選取藥品所在的所有位置及盤點量是否盤點
 def db_app_select_result(code):
-    date = db_get_all_data_list()
-    date = json.loads(date)
-    date = max(date)
-
+    date = get_latest_inventory_date()
     conn = sqlite3.connect(dataDB)
     cursor = conn.cursor()
     sql = "SELECT 單位, 組別, App盤點總數量, 是否盤點 FROM {0} WHERE 代碼={1}".format(f"'{date}'", f"'{code}'")
@@ -306,4 +294,41 @@ def db_app_select_result(code):
     data = data.to_json(orient='records')
     return data
 
+# 加減單一藥品數量，回傳藥品的計價單位
+def db_app_single_unit_info(unit, group, code):
+    date = get_latest_inventory_date()
+    conn = sqlite3.connect(dataDB)
+    sql = "SELECT * From salesUnit"
+    unitComparisonTable = pd.read_sql(sql, conn).set_index("計價單位").T.to_dict("list")
+    sql = "SELECT 計價單位 FROM {0} WHERE 單位={1} AND 組別={2} AND 代碼={3}".format(f"'{date}'", f"'{unit}'", f"'{group}'", f"'{code}'")
+    df = pd.read_sql(sql, conn)
+    df["計價單位"] = unitComparisonTable[df["計價單位"].values[0]][0]
+    data = df.to_json(orient='records')
+    return data
+
+# 加減單一藥品數量，將App位置藥碼輸入的App盤點數量，運算更新加減幾顆至資料庫中
+def db_app_update_single_amount(dict):
+    date = get_latest_inventory_date()
+    unit = dict["單位"]
+    group = dict["組別"]
+    code = dict["代碼"]
+    amount = int(dict["App盤點數量"])
+
+    conn = sqlite3.connect(dataDB)
+    cursor = conn.cursor()
+    sql = "SELECT App盤點數量 FROM {0} WHERE 單位={1} AND 組別={2} AND 代碼={3}".format(f"'{date}'", f"'{unit}'", f"'{group}'", f"'{code}'")
+    databaseAmount = int(cursor.execute(sql).fetchone()[0])
+    result = databaseAmount + amount
+    sql = "UPDATE {0} SET App盤點數量={1} WHERE 單位={2} AND 組別={3} AND 代碼={4}".format(f"'{date}'", f"'{result}'", f"'{unit}'", f"'{group}'", f"'{code}'")
+    cursor.execute(sql)
+    conn.commit()
+    conn.close()
+    return 
+
+# 取得"最新一天"的盤點日期
+def get_latest_inventory_date():
+    date = db_get_all_data_list()
+    date = json.loads(date)
+    date = max(date)
+    return date
 #---------------APP---------------#
