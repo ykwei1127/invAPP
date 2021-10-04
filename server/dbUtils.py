@@ -9,28 +9,11 @@ from pandas.io.sql import read_sql
 userDB = "db/userDB.db"
 dataDB = "db/dataDB.db"
 
-def default(username):
-    # 連資料庫
-    conn = sqlite3.connect(userDB)
-    cursor = conn.cursor()
-    ###
-    
-    ###
-    conn.commit()
-    conn.close()
-    return
-
 # 將新使用者的username和password新增到user table
 def db_create_user(username, password):
     # 連資料庫
     conn = sqlite3.connect(userDB)
     cursor = conn.cursor()
-    # 確認user表是否已創建，若無則建立
-    # listOfTables = cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='user'").fetchall()
-    # if listOfTables == []:
-    #     cursor.execute("CREATE TABLE IF NOT EXISTS user (username TEXT PRIMARY KEY UNIQUE, password TEXT)")
-    #     cursor.execute("CREATE INDEX idx1 ON user(username)")
-    # 插入使用者資料進table中
     cursor.execute("INSERT INTO user VALUES (?,?)", (username,password))
     conn.commit()
     conn.close()
@@ -141,8 +124,8 @@ def db_create_data_table(date, rawDataFrame):
         預包數量 INTEGER, \
         預包單位, \
         App盤點預包數量 INTEGER DEFAULT 0, \
-        App盤點數量 INTEGER DEFAULT 0, App盤點總數量 INTEGER GENERATED ALWAYS AS (預包數量*App盤點預包數量+App盤點數量) STORED, \
-        是否盤點 INTEGER GENERATED ALWAYS AS (CASE WHEN App盤點總數量>0 THEN 1 ELSE 0 END) STORED, \
+        App盤點數量 INTEGER , App盤點總數量 INTEGER GENERATED ALWAYS AS (CASE WHEN App盤點數量 IS NOT NULL THEN 預包數量*App盤點預包數量+App盤點數量 ELSE NULL END) STORED, \
+        是否盤點 INTEGER GENERATED ALWAYS AS (CASE WHEN App盤點總數量 IS NOT NULL THEN 1 ELSE 0 END) STORED, \
         CONSTRAINT con_primary_key PRIMARY KEY(盤點日, 單位, 組別, 代碼), \
         FOREIGN KEY (ID) REFERENCES {1} (ID) \
     )".format(f"'{date}'", f"'{date}-progress'") #建立資料表
@@ -156,8 +139,6 @@ def db_get_progress_data(date):
     conn = sqlite3.connect(dataDB)
     cursor = conn.cursor()
     query = "UPDATE {0} SET 已盤點數=temp.已盤點數 FROM (SELECT COUNT(*) AS 已盤點數, ID FROM {1} WHERE 是否盤點>0 GROUP BY ID) AS temp WHERE {0}.ID=temp.ID".format(f"'{date}-progress'", f"'{date}'")
-    # UPDATE '1100814-progress' SET 已盤點數=測試.已盤點數 FROM (SELECT ID,SUM(是否盤點) AS 已盤點數 FROM '1100814' GROUP BY ID) AS 測試 WHERE '1100814-progress'.ID=測試.ID;
-    # UPDATE '1100814-progress' SET 已盤點數=測試.已盤點數 FROM (SELECT COUNT(*) AS 已盤點數, ID FROM '1100814' WHERE 是否盤點>0 GROUP BY ID) AS 測試 WHERE '1100814-progress'.ID=測試.ID;
     cursor.execute(query)
     conn.commit()
     sql = "SELECT ID,盤點日,單位,組別,藥品總數,已盤點數,盤點進度 FROM {}".format(f"'{date}-progress'")
@@ -208,13 +189,9 @@ def db_set_default_user(username, password):
 def db_set_salesUnit(df):
     conn = sqlite3.connect(dataDB)
     df.to_sql('salesUnit', conn, if_exists = 'replace', index=False)
+
 #----- DEFAULT for Initiation -----#
 
-# SELECT *, COUNT(*) FROM '1100814' GROUP BY 盤點日,單位,組別
-# SELECT ID,盤點日,單位,組別,PID FROM '1100814' INNER JOIN '1100814-progress' USING (盤點日,單位,組別);
-# SELECT ID,盤點日,單位,組別,代碼,藥名,計價單位,預包數量,預包單位 FROM '1100814-progress' INNER JOIN '1100814' USING (盤點日,單位,組別);
-# SELECT ID,COUNT(*) AS 已盤點數 FROM '1100814' WHERE 是否盤點>0 GROUP BY ID ;
-# query = "SELECT ID,SUM(是否盤點) AS 已盤點數 FROM {}  GROUP BY ID".format(f"'{date}'")
 
 #---------------APP---------------#
 
@@ -317,7 +294,7 @@ def db_app_update_single_amount(dict):
     conn = sqlite3.connect(dataDB)
     cursor = conn.cursor()
     sql = "SELECT App盤點數量 FROM {0} WHERE 單位={1} AND 組別={2} AND 代碼={3}".format(f"'{date}'", f"'{unit}'", f"'{group}'", f"'{code}'")
-    databaseAmount = int(cursor.execute(sql).fetchone()[0])
+    databaseAmount = int(0 if cursor.execute(sql).fetchone()[0] is None else cursor.execute(sql).fetchone()[0])
     result = databaseAmount + amount
     sql = "UPDATE {0} SET App盤點數量={1} WHERE 單位={2} AND 組別={3} AND 代碼={4}".format(f"'{date}'", f"'{result}'", f"'{unit}'", f"'{group}'", f"'{code}'")
     cursor.execute(sql)
