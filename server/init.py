@@ -8,7 +8,7 @@ dic = {
     "計價單位": [
         "10 mL", "Amp", "Bag", "Bot", "Box", "Bucc", "CART", "Cap", 
         "Dose", "Drop", "IU", "Kit", "L/mir", "Pack", "Patcl", "Pce",
-        "Pcs", "Pen", "Pow", "Puff", "Supp", "Syrin", "Tab", "Time", 
+        "Pcs", "Pen", "Pow", "Puff", "Supp", "Syring", "Tab", "Time", 
         "Tube", "U", "UDV", "Vial", "g", "kg", "mCi", "mL",
         "mcg", "mg", "qs", "spray", "ug"
     ],

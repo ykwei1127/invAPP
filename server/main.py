@@ -222,4 +222,10 @@ async def app_post_single_amount(request: Request):
     content = json.dumps(content)
     return Response(content=content)
 
+@app.get("/appGetAllCodeName")
+def app_get_single_inventory_unit_info(request: Request):
+    data = dbUtils.db_app_get_all_code_name()
+    headers = {"Charset":"utf-8"}
+    return Response(content=data, headers=headers)
+
 ### APP ###

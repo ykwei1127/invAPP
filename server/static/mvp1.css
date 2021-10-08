@@ -485,6 +485,15 @@ blockquote footer {
 }
 
 .tableRowHover:hover {
-    background: #32e370;
+    /* background: #32e370; */
+    background: #FAF869  !important;
     cursor: pointer;
+}
+
+.finish {
+    background-color: #A7F58F !important;
+}
+
+.notFinish {
+    background-color: #FFCCCC !important;
 }

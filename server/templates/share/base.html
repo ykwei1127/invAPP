@@ -1,13 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="{{ url_for('static', path='/mvp.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', path='/mvp1.css') }}" rel="stylesheet">
     <!-- <link href="static/mvp1.css" rel="stylesheet"> -->
     <link href="{{ url_for('static', path='/favicon.jpg') }}" rel="shortcut icon">
     <title>盤點系統</title>
 </head>
+
 <body>
     {% include "component/navbar.html" %}
     {% block content %}
@@ -15,4 +17,5 @@
     <!-- {% include "component/footer.html" %} -->
     <!-- <script src="static/script.js"></script> -->
 </body>
+
 </html>

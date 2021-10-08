@@ -302,6 +302,15 @@ def db_app_update_single_amount(dict):
     conn.close()
     return 
 
+# 加減單一藥品數量，給iOS APP在搜尋前取得資料庫中所有藥碼及藥名
+def db_app_get_all_code_name():
+    date = get_latest_inventory_date()
+    conn = sqlite3.connect(dataDB)
+    sql = "SELECT 代碼, 藥名 FROM {0}".format(f"'{date}'")
+    data = pd.read_sql(sql, conn)
+    data = data.to_json(orient='records')
+    return data
+
 # 取得"最新一天"的盤點日期
 def get_latest_inventory_date():
     date = db_get_all_data_list()

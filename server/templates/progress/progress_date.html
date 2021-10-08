@@ -35,7 +35,7 @@
         // var table = document.getElementById("table");
         progressData.forEach(element => {
             let tr = document.createElement('tr');
-            tr.setAttribute('class', 'tableRowHover');
+            // tr.setAttribute('class', 'tableRowHover');
             tr.setAttribute('onclick', 'clickRow(this)');
             // element.forEach(data => {
             element.forEach(function (data, index, array) {
@@ -43,6 +43,11 @@
                 td.textContent = data;
                 if (index === array.length - 1) {
                     td.textContent = data + " %";
+                    if (data == "100") {
+                        tr.setAttribute("class", "finish tableRowHover");
+                    } else {
+                        tr.setAttribute("class", "notFinish tableRowHover");
+                    }
                 }
                 tr.appendChild(td)
             });

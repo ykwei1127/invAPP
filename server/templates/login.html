@@ -1,35 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="{{ url_for('static', path='/mvp.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', path='/mvp1.css') }}" rel="stylesheet">
     <!-- <link href="static/mvp1.css" rel="stylesheet"> -->
     <!-- <link rel="stylesheet" href="https://unpkg.com/mvp.css"> -->
     <link href="{{ url_for('static', path='/favicon.jpg') }}" rel="shortcut icon">
     <!-- <link rel="shortcut icon" href="#"> -->
     <title>盤點系統</title>
 </head>
+
 <body>
     <main>
-            <section>
-                <form name="myForm" action="/auth/login" method="POST">
-                    <header>
-                        <h2>盤點系統登入畫面</h2>
-                    </header>
-                    <label for="input1">帳號:</label>
-                    <section>
-                        <input type="text" id="username" name="username" size="" placeholder="" required>
-                    </section>
-                    <label for="input2">密碼:</label>
-                    <section>
-                        <input type="password" id="password" name="password" size="" placeholder="" required>
-                    </section>
-                    <section>
-                        <button id="login_bt" type="submit">登入</button>
-                    </section>
-                </form>
-            </section>
+        <section>
+            <form name="myForm" action="/auth/login" method="POST">
+                <header>
+                    <h2>盤點系統登入畫面</h2>
+                </header>
+                <label for="input1">帳號:</label>
+                <section>
+                    <input type="text" id="username" name="username" size="" placeholder="" required>
+                </section>
+                <label for="input2">密碼:</label>
+                <section>
+                    <input type="password" id="password" name="password" size="" placeholder="" required>
+                </section>
+                <section>
+                    <button id="login_bt" type="submit">登入</button>
+                </section>
+            </form>
+        </section>
     </main>
 </body>
+
 </html>
